@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analysis - Syntra</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="dashboard-body">
+    <nav class="navbar navbar-dashboard">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <svg class="logo-icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="20" cy="20" r="18" stroke="currentColor" stroke-width="2"/>
+                    <path d="M12 20C12 20 15 14 20 14C25 14 28 20 28 20C28 20 25 26 20 26C15 26 12 20 12 20Z" stroke="currentColor" stroke-width="2"/>
+                    <circle cx="20" cy="20" r="4" fill="currentColor"/>
+                </svg>
+                <span>Syntra</span>
+            </a>
+            <div class="nav-status">
+                <span class="status-indicator" id="connectionStatus"></span>
+                <span id="connectionText">Connecting...</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="dashboard.html">Live Monitor</a></li>
+                <li><a href="history.html">History</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="dashboard-main analysis-main">
+        <section class="analysis-header">
+            <h1>EEG Data Analysis</h1>
+            <p>Upload raw EEG data from your headset for emotion classification and analysis</p>
+        </section>
+
+        <div class="analysis-grid">
+            <!-- Upload Section -->
+            <div class="analysis-card upload-card">
+                <div class="card-header">
+                    <h2>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="17 8 12 3 7 8"/>
+                            <line x1="12" y1="3" x2="12" y2="15"/>
+                        </svg>
+                        Upload EEG Data
+                    </h2>
+                </div>
+                <div class="card-content">
+                    <div class="upload-zone" id="uploadZone">
+                        <div class="upload-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="48" height="48">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                <polyline points="14 2 14 8 20 8"/>
+                                <line x1="12" y1="18" x2="12" y2="12"/>
+                                <line x1="9" y1="15" x2="12" y2="12"/>
+                                <line x1="15" y1="15" x2="12" y2="12"/>
+                            </svg>
+                        </div>
+                        <p class="upload-text">Drag & drop your CSV file here</p>
+                        <p class="upload-subtext">or click to browse</p>
+                        <input type="file" id="fileInput" accept=".csv,.txt,.json" hidden>
+                    </div>
+                    <div class="upload-info">
+                        <h4>Supported Formats</h4>
+                        <ul>
+                            <li><strong>CSV:</strong> Rows of channel values (14 channels per row)</li>
+                            <li><strong>JSON:</strong> Array of channel values or named channels</li>
+                            <li><strong>TXT:</strong> Space or comma separated values</li>
+                        </ul>
+                        <div class="channels-info">
+                            <h4>Expected Channels (14)</h4>
+                            <div class="channel-tags" id="channelTags"></div>
+                        </div>
+                    </div>
+                    <div class="file-preview" id="filePreview" style="display: none;">
+                        <div class="file-info">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                <polyline points="14 2 14 8 20 8"/>
+                            </svg>
+                            <span id="fileName">file.csv</span>
+                            <span id="fileSize">0 KB</span>
+                            <button class="btn-icon" id="removeFile" title="Remove file">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                                    <line x1="18" y1="6" x2="6" y2="18"/>
+                                    <line x1="6" y1="6" x2="18" y2="18"/>
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="data-preview">
+                            <h4>Data Preview</h4>
+                            <div class="preview-table-wrapper">
+                                <table class="preview-table" id="previewTable">
+                                    <thead id="previewHead"></thead>
+                                    <tbody id="previewBody"></tbody>
+                                </table>
+                            </div>
+                            <p class="preview-info" id="previewInfo"></p>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary btn-large analyze-btn" id="analyzeBtn" disabled>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                            <circle cx="12" cy="12" r="10"/>
+                            <path d="M12 6v6l4 2"/>
+                        </svg>
+                        Analyze Data
+                    </button>
+                </div>
+            </div>
+
+            <!-- Results Section -->
+            <div class="analysis-card results-card" id="resultsCard">
+                <div class="card-header">
+                    <h2>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24">
+                            <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+                        </svg>
+                        Analysis Results
+                    </h2>
+                </div>
+                <div class="card-content">
+                    <div class="results-placeholder" id="resultsPlaceholder">
+                        <div class="placeholder-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="64" height="64">
+                                <circle cx="12" cy="12" r="10"/>
+                                <path d="M8 14s1.5 2 4 2 4-2 4-2"/>
+                                <line x1="9" y1="9" x2="9.01" y2="9"/>
+                                <line x1="15" y1="9" x2="15.01" y2="9"/>
+                            </svg>
+                        </div>
+                        <p>Upload EEG data to see analysis results</p>
+                    </div>
+                    
+                    <div class="results-content" id="resultsContent" style="display: none;">
+                        <!-- Primary Result -->
+                        <div class="primary-result">
+                            <div class="result-emotion" id="resultEmotion">
+                                <div class="emotion-icon-large" id="resultEmotionIcon">
+                                    <span></span>
+                                </div>
+                                <div class="emotion-details">
+                                    <span class="emotion-label-large" id="resultEmotionLabel">Happy</span>
+                                    <span class="emotion-need" id="resultNeed">Feeling content and engaged</span>
+                                </div>
+                            </div>
+                            <div class="result-confidence">
+                                <div class="confidence-circle" id="confidenceCircle">
+                                    <svg viewBox="0 0 100 100">
+                                        <circle class="confidence-bg" cx="50" cy="50" r="45"/>
+                                        <circle class="confidence-progress" id="confidenceProgress" cx="50" cy="50" r="45"/>
+                                    </svg>
+                                    <span class="confidence-text" id="resultConfidence">95%</span>
+                                </div>
+                                <span class="confidence-label">Confidence</span>
+                            </div>
+                        </div>
+
+                        <!-- Band Powers -->
+                        <div class="result-section">
+                            <h3>Frequency Band Powers</h3>
+                            <div class="band-powers-chart" id="bandPowersChart">
+                                <div class="band-bar-vertical" data-band="delta">
+                                    <div class="bar-fill" id="resultDeltaBar"></div>
+                                    <span class="bar-label">Delta</span>
+                                    <span class="bar-value" id="resultDeltaValue">0</span>
+                                </div>
+                                <div class="band-bar-vertical" data-band="theta">
+                                    <div class="bar-fill" id="resultThetaBar"></div>
+                                    <span class="bar-label">Theta</span>
+                                    <span class="bar-value" id="resultThetaValue">0</span>
+                                </div>
+                                <div class="band-bar-vertical" data-band="alpha">
+                                    <div class="bar-fill" id="resultAlphaBar"></div>
+                                    <span class="bar-label">Alpha</span>
+                                    <span class="bar-value" id="resultAlphaValue">0</span>
+                                </div>
+                                <div class="band-bar-vertical" data-band="beta">
+                                    <div class="bar-fill" id="resultBetaBar"></div>
+                                    <span class="bar-label">Beta</span>
+                                    <span class="bar-value" id="resultBetaValue">0</span>
+                                </div>
+                                <div class="band-bar-vertical" data-band="gamma">
+                                    <div class="bar-fill" id="resultGammaBar"></div>
+                                    <span class="bar-label">Gamma</span>
+                                    <span class="bar-value" id="resultGammaValue">0</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Emotion Probabilities -->
+                        <div class="result-section">
+                            <h3>Emotion Probabilities</h3>
+                            <div class="probabilities-grid" id="probabilitiesGrid">
+                                <!-- Filled dynamically -->
+                            </div>
+                        </div>
+
+                        <!-- Suggestion -->
+                        <div class="result-section">
+                            <h3>Caregiver Suggestion</h3>
+                            <div class="suggestion-box large" id="resultSuggestion">
+                                <p id="resultSuggestionText">Based on the analysis...</p>
+                            </div>
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="result-actions">
+                            <button class="btn btn-secondary" id="downloadReport">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                    <polyline points="7 10 12 15 17 10"/>
+                                    <line x1="12" y1="15" x2="12" y2="3"/>
+                                </svg>
+                                Download Report
+                            </button>
+                            <button class="btn btn-primary" id="newAnalysis">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+                                    <line x1="12" y1="5" x2="12" y2="19"/>
+                                    <line x1="5" y1="12" x2="19" y2="12"/>
+                                </svg>
+                                New Analysis
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Loading State -->
+                    <div class="results-loading" id="resultsLoading" style="display: none;">
+                        <div class="loading-animation">
+                            <div class="brain-scan">
+                                <svg viewBox="0 0 100 100" class="brain-svg">
+                                    <path d="M50 10C30 10 15 25 15 45C15 55 20 65 30 70C30 80 40 90 50 90C60 90 70 80 70 70C80 65 85 55 85 45C85 25 70 10 50 10Z" stroke="currentColor" stroke-width="2" fill="none"/>
+                                    <path class="scan-line" d="M15 50 H85"/>
+                                </svg>
+                            </div>
+                            <p>Analyzing brainwave patterns...</p>
+                            <div class="loading-steps">
+                                <span class="step active" id="step1">Parsing data</span>
+                                <span class="step" id="step2">Computing frequencies</span>
+                                <span class="step" id="step3">Classifying emotion</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sample Data Section -->
+        <section class="sample-data-section">
+            <h2>Try with Sample Data</h2>
+            <p>Don't have EEG data? Try our pre-recorded samples to see how Syntra works.</p>
+            <div class="sample-buttons">
+                <button class="btn btn-sample" data-emotion="happy">
+                    <span class="sample-icon">&#128522;</span>
+                    Happy Sample
+                </button>
+                <button class="btn btn-sample" data-emotion="sad">
+                    <span class="sample-icon">&#128546;</span>
+                    Sad Sample
+                </button>
+                <button class="btn btn-sample" data-emotion="anxious">
+                    <span class="sample-icon">&#128552;</span>
+                    Anxious Sample
+                </button>
+                <button class="btn btn-sample" data-emotion="sleepy">
+                    <span class="sample-icon">&#128564;</span>
+                    Sleepy Sample
+                </button>
+                <button class="btn btn-sample" data-emotion="hungry">
+                    <span class="sample-icon">&#127837;</span>
+                    Hungry Sample
+                </button>
+            </div>
+        </section>
+    </main>
+
+    <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Syntra</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="dashboard-body">
+    <nav class="navbar navbar-dashboard">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <svg class="logo-icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="20" cy="20" r="18" stroke="currentColor" stroke-width="2"/>
+                    <path d="M12 20C12 20 15 14 20 14C25 14 28 20 28 20C28 20 25 26 20 26C15 26 12 20 12 20Z" stroke="currentColor" stroke-width="2"/>
+                    <circle cx="20" cy="20" r="4" fill="currentColor"/>
+                </svg>
+                <span>Syntra</span>
+            </a>
+            <div class="nav-status">
+                <span class="status-indicator" id="connectionStatus"></span>
+                <span id="connectionText">Connecting...</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="analysis.html">Analysis</a></li>
+                <li><a href="history.html">History</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="dashboard-main">
+        <aside class="sidebar">
+            <div class="sidebar-section">
+                <h3>Current State</h3>
+                <div class="emotion-display" id="emotionDisplay">
+                    <div class="emotion-icon" id="emotionIcon">
+                        <span>--</span>
+                    </div>
+                    <div class="emotion-label" id="emotionLabel">Waiting for data...</div>
+                    <div class="emotion-confidence">
+                        <span>Confidence:</span>
+                        <div class="confidence-bar">
+                            <div class="confidence-fill" id="confidenceFill"></div>
+                        </div>
+                        <span id="confidenceValue">--%</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <h3>Suggestion</h3>
+                <div class="suggestion-box" id="suggestionBox">
+                    <p id="suggestionText">Start monitoring to receive suggestions.</p>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <h3>Band Powers</h3>
+                <div class="band-powers" id="bandPowers">
+                    <div class="band-item">
+                        <span class="band-name">Delta</span>
+                        <div class="band-bar">
+                            <div class="band-fill" id="deltaBar"></div>
+                        </div>
+                        <span class="band-value" id="deltaValue">--</span>
+                    </div>
+                    <div class="band-item">
+                        <span class="band-name">Theta</span>
+                        <div class="band-bar">
+                            <div class="band-fill" id="thetaBar"></div>
+                        </div>
+                        <span class="band-value" id="thetaValue">--</span>
+                    </div>
+                    <div class="band-item">
+                        <span class="band-name">Alpha</span>
+                        <div class="band-bar">
+                            <div class="band-fill" id="alphaBar"></div>
+                        </div>
+                        <span class="band-value" id="alphaValue">--</span>
+                    </div>
+                    <div class="band-item">
+                        <span class="band-name">Beta</span>
+                        <div class="band-bar">
+                            <div class="band-fill" id="betaBar"></div>
+                        </div>
+                        <span class="band-value" id="betaValue">--</span>
+                    </div>
+                    <div class="band-item">
+                        <span class="band-name">Gamma</span>
+                        <div class="band-bar">
+                            <div class="band-fill" id="gammaBar"></div>
+                        </div>
+                        <span class="band-value" id="gammaValue">--</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <h3>Controls</h3>
+                <div class="controls">
+                    <button class="btn btn-primary" id="startBtn">Start Monitoring</button>
+                    <button class="btn btn-secondary" id="stopBtn" disabled>Stop</button>
+                </div>
+            </div>
+        </aside>
+
+        <section class="dashboard-content">
+            <div class="chart-container">
+                <div class="chart-header">
+                    <h2>Live EEG Signal</h2>
+                    <div class="chart-controls">
+                        <select id="channelSelect">
+                            <option value="all">All Channels</option>
+                            <option value="Fp1">Fp1</option>
+                            <option value="AF3">AF3</option>
+                            <option value="F3">F3</option>
+                            <option value="F7">F7</option>
+                            <option value="FC5">FC5</option>
+                            <option value="FC1">FC1</option>
+                            <option value="C3">C3</option>
+                            <option value="T7">T7</option>
+                            <option value="CP5">CP5</option>
+                            <option value="CP1">CP1</option>
+                            <option value="P3">P3</option>
+                            <option value="P7">P7</option>
+                            <option value="PO3">PO3</option>
+                            <option value="O1">O1</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="chart-wrapper">
+                    <canvas id="eegChart"></canvas>
+                </div>
+            </div>
+
+            <div class="secondary-panels">
+                <div class="panel">
+                    <h3>Recent Emotions</h3>
+                    <div class="recent-emotions" id="recentEmotions">
+                        <p class="empty-state">No data yet</p>
+                    </div>
+                </div>
+                <div class="panel">
+                    <h3>Session Stats</h3>
+                    <div class="session-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">Duration</span>
+                            <span class="stat-value" id="sessionDuration">00:00</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Samples</span>
+                            <span class="stat-value" id="sampleCount">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Dominant</span>
+                            <span class="stat-value" id="dominantEmotion">--</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="app.js"></script>
+</body>
+</html>
