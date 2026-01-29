@@ -98,6 +98,6 @@ This project is licensed under the MIT License.
 
 ---
 
-## ❤️ Made with love for **United Hacks V6**  
+## ❤️ Made with love 
 
 ---
